@@ -1,26 +1,43 @@
-import React from "react";
+import React, { useState, useEffect } from 'react';
+import SecondsCounter from './SecondsCounter.jsx';
 
-//include images into your bundle
-import rigoImage from "../../img/rigo-baby.jpg";
-
-//create your first component
 const Home = () => {
-	return (
-		<div className="text-center">
-			<h1 className="text-center mt-5">Hello Rigo!</h1>
-			<p>
-				<img src={rigoImage} />
-			</p>
-			<a href="#" className="btn btn-success">
-				If you see this green button... bootstrap is working...
-			</a>
+    const [seconds, setSeconds] = useState(0);
+    const [isCountingDown, setIsCountingDown] = useState(false);
+
+    // Modifica el useEffect para manejar la cuenta regresiva o progresiva
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setSeconds((prevSeconds) => isCountingDown ? prevSeconds - 1 : prevSeconds + 1);
+        }, 1000);
+
+        return () => clearInterval(interval); // Limpia el intervalo cuando el componente se desmonta
+    }, [isCountingDown]);
+
+    return (
+        <div className="text-center mt-5">
+            <SecondsCounter seconds={seconds} />
+            <div className="mt-3">
+                <button onClick={() => setIsCountingDown(false)} className="btn btn-primary m-2">
+                    Start Count Up
+                </button>
+                <button onClick={() => setIsCountingDown(true)} className="btn btn-secondary m-2">
+                    Start Count Down
+                </button>
+                <button onClick={() => setSeconds(0)} className="btn btn-danger m-2">
+                    Reset
+                </button>
+                <button onClick={() => clearInterval(interval)} className="btn btn-warning m-2">
+                    Stop
+                </button>
+            </div>
 			<p>
 				Made by{" "}
-				<a href="http://www.4geeksacademy.com">4Geeks Academy</a>, with
+				<a href="https://github.com/Ruubia">Ruubia</a>, with
 				love!
 			</p>
-		</div>
-	);
+        </div>
+    );
 };
 
 export default Home;
