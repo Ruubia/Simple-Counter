@@ -4,8 +4,11 @@ import SecondsCounter from './SecondsCounter.jsx';
 const Home = () => {
     const [seconds, setSeconds] = useState(0);
     const [isCountingDown, setIsCountingDown] = useState(false);
+    
+    // Define el tiempo específico para la alerta
+    const specificTime = 10; // Cambia este valor al tiempo específico que desees
 
-    // Modifica el useEffect para manejar la cuenta regresiva o progresiva
+    // Lógica para el contador hacia arriba o hacia abajo
     useEffect(() => {
         const interval = setInterval(() => {
             setSeconds((prevSeconds) => isCountingDown ? prevSeconds - 1 : prevSeconds + 1);
@@ -13,6 +16,13 @@ const Home = () => {
 
         return () => clearInterval(interval); // Limpia el intervalo cuando el componente se desmonta
     }, [isCountingDown]);
+
+    // Alerta cuando se alcanza el tiempo específico
+    useEffect(() => {
+        if (seconds === specificTime) {
+            alert('Time reached!');
+        }
+    }, [seconds]);
 
     return (
         <div className="text-center mt-5">
@@ -31,11 +41,6 @@ const Home = () => {
                     Stop
                 </button>
             </div>
-			<p>
-				Made by{" "}
-				<a href="https://github.com/Ruubia">Ruubia</a>, with
-				love!
-			</p>
         </div>
     );
 };
