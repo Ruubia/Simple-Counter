@@ -1,28 +1,32 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import SecondsCounter from './SecondsCounter.jsx';
 
 const Home = () => {
-    const [seconds, setSeconds] = useState(0);
-    const [isCountingDown, setIsCountingDown] = useState(false);
-    
-    // Define el tiempo específico para la alerta
-    const specificTime = 10; // Cambia este valor al tiempo específico que desees
+    const [seconds, setSeconds] = useState(0);  // Tiempo actual en el contador
+    const [isCountingDown, setIsCountingDown] = useState(false);  // Indica si está contando hacia abajo
+    const intervalRef = useRef(null);  // Referencia al intervalo
 
-    // Lógica para el contador hacia arriba o hacia abajo
+    // Lógica para manejar el contador hacia arriba o hacia abajo
     useEffect(() => {
-        const interval = setInterval(() => {
-            setSeconds((prevSeconds) => isCountingDown ? prevSeconds - 1 : prevSeconds + 1);
+        if (intervalRef.current) {
+            clearInterval(intervalRef.current);
+        }
+
+        intervalRef.current = setInterval(() => {
+            setSeconds((prevSeconds) =>
+                isCountingDown ? Math.max(prevSeconds - 1, 0) : prevSeconds + 1
+            );
         }, 1000);
 
-        return () => clearInterval(interval); // Limpia el intervalo cuando el componente se desmonta
+        return () => clearInterval(intervalRef.current); // Limpia el intervalo cuando el componente se desmonta
     }, [isCountingDown]);
 
-    // Alerta cuando se alcanza el tiempo específico
+    // Alerta cuando el contador llegue a los últimos 10 segundos antes de alcanzar 0
     useEffect(() => {
-        if (seconds === specificTime) {
-            alert('Time reached!');
+        if (isCountingDown && seconds <= 10 && seconds > 0) {
+            alert('¡Quedan menos de 10 segundos!');
         }
-    }, [seconds]);
+    }, [seconds, isCountingDown]);
 
     return (
         <div className="text-center mt-5">
@@ -37,7 +41,10 @@ const Home = () => {
                 <button onClick={() => setSeconds(0)} className="btn btn-danger m-2">
                     Reset
                 </button>
-                <button onClick={() => clearInterval(interval)} className="btn btn-warning m-2">
+                <button onClick={() => {
+                    clearInterval(intervalRef.current); 
+                    setIsCountingDown(false); 
+                }} className="btn btn-warning m-2">
                     Stop
                 </button>
             </div>
@@ -46,3 +53,4 @@ const Home = () => {
 };
 
 export default Home;
+
